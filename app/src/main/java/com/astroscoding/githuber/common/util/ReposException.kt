@@ -1,3 +1,3 @@
 package com.astroscoding.githuber.common.util
 
-open class ReposException(message: String) : RuntimeException(message)
+open class ReposException(message: String="Fetching repos exception occurred") : RuntimeException(message)

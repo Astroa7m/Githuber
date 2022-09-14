@@ -198,7 +198,7 @@ fun LanguageMenu(
                     ) else it.toString()
                 })
             }, onClick = {
-                if (language != it){
+                if (currentLanguage != it){
                     language = it
                     onLanguageSelected(language)
                 }

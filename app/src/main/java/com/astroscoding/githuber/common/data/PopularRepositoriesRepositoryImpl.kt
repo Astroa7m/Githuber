@@ -6,6 +6,7 @@ import com.astroscoding.githuber.common.data.remote.GithubApi
 import com.astroscoding.githuber.common.domain.model.Repo
 import com.astroscoding.githuber.common.domain.model.Sort
 import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRepository
+import com.astroscoding.githuber.common.util.BadQueryException
 import com.astroscoding.githuber.common.util.EmptyResponseBodyException
 import com.astroscoding.githuber.common.util.LimitExceededException
 import com.astroscoding.githuber.common.util.ResponseUnsuccessfulException
@@ -56,8 +57,11 @@ class PopularRepositoriesRepositoryImpl @Inject constructor(
                 throw ResponseUnsuccessfulException()
             }
             if (response.isSuccessful) {
+                // user enters weird query or language
+                // server responds with 200 but no items
+                // so we handle this
                 if (response.body()?.total_count == 0)
-                    throw EmptyResponseBodyException()
+                    throw BadQueryException()
                 return response.body()?.let { body ->
                     body.repositories.map {
                         it.mapTo()
@@ -67,7 +71,7 @@ class PopularRepositoriesRepositoryImpl @Inject constructor(
                 if (response.code()==403) // user requesting too much
                     throw LimitExceededException()
                 else (response.code()==422) // bad query
-                    throw ResponseUnsuccessfulException("Nothing matched your queries, Setting params to defaults")
+                    throw BadQueryException()
             }
     }
     //403 when error response

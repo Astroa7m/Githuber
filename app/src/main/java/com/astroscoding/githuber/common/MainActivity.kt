@@ -11,6 +11,7 @@ import com.astroscoding.githuber.common.presentation.comp.DefaultAppBar
 import com.astroscoding.githuber.common.presentation.comp.NavController
 import com.astroscoding.githuber.common.presentation.comp.ReposBottomNavigationBar
 import com.astroscoding.githuber.common.presentation.ui.theme.GithuberTheme
+import com.astroscoding.githuber.common.util.languageCharToLanguageSymbol
 import com.astroscoding.githuber.popularrepos.presentation.PopularReposUIEvent
 import com.astroscoding.githuber.popularrepos.presentation.PopularReposViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                                     PopularReposUIEvent.SelectNewSort(it)
                                 )
                             },
-                            currentLanguage = popularReposViewModel.lang,
+                            currentLanguage = languageCharToLanguageSymbol(popularReposViewModel.lang),
                             onLanguageSelected = {
                                 popularReposViewModel.onEvent(
                                     PopularReposUIEvent.SelectNewLanguage(it)

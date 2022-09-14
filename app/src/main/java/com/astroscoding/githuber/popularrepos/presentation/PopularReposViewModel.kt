@@ -7,19 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.astroscoding.githuber.common.data.preferences.RepoPreferences
 import com.astroscoding.githuber.common.domain.model.Sort
-import com.astroscoding.githuber.common.util.Constants
-import com.astroscoding.githuber.common.util.EmptyResponseBodyException
-import com.astroscoding.githuber.common.util.ResponseUnsuccessfulException
-import com.astroscoding.githuber.common.util.formQuery
+import com.astroscoding.githuber.common.util.*
 import com.astroscoding.githuber.popularrepos.presentation.usecase.DeleteAllReposUseCase
 import com.astroscoding.githuber.popularrepos.presentation.usecase.GetPopularReposUseCase
 import com.astroscoding.githuber.popularrepos.presentation.usecase.StoreReposUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -32,7 +26,6 @@ class PopularReposViewModel @Inject constructor(
     private val dispatcher: CoroutineContext
 ) : ViewModel() {
 
-    private var refresh: Boolean = false
     var lang: String by mutableStateOf(Constants.DEFAULT_LANGUAGE)
         private set
     var sort: Sort by mutableStateOf(Sort.EmptySort)
@@ -47,6 +40,7 @@ class PopularReposViewModel @Inject constructor(
         private set
 
     private val _refresh = MutableStateFlow(false)
+    private val _languageChanged = MutableStateFlow(false)
 
     private val _shouldAnimateToStartOfTheList = MutableStateFlow(false)
     val shouldAnimateToStartOfTheList = _shouldAnimateToStartOfTheList.asStateFlow()
@@ -65,23 +59,23 @@ class PopularReposViewModel @Inject constructor(
                 _refresh
             ) { language, sortOrder, shouldRefresh ->
                 Triple(language, sortOrder, shouldRefresh)
-            }.flatMapLatest { (language, sortOrder, shouldRefresh) ->
+            }.flatMapLatest { (language, sortOrder, _) ->
                 lang = language
                 sort = sortOrder
-                refresh = shouldRefresh
                 getLocalRepos(sortOrder)
             }.collect { reposFromDatabase ->
-                if (reposFromDatabase.isEmpty() || refresh) {
-                    // if we are not already fetching items
-                    if (state.value.loading.not())
-                        getReposFromRemote(formQuery(language = lang), sort)
+                if (reposFromDatabase.isEmpty() || _refresh.value || _languageChanged.value) {
+                    getReposFromRemote(formQuery(language = lang), sort)
                 }
-                _state.update {
-                    PopularReposState(
-                        repos = reposFromDatabase
-                    )
+                if (!_state.value.loading) {
+                    _state.update {
+                        PopularReposState(
+                            repos = reposFromDatabase
+                        )
+                    }
+                    if (_refresh.value)
+                        _refresh.value = false
                 }
-                _refresh.value = false
             }
 
         }
@@ -95,7 +89,7 @@ class PopularReposViewModel @Inject constructor(
 
 
     private fun onFailure(throwable: Throwable) {
-        if (throwable is ResponseUnsuccessfulException || throwable is EmptyResponseBodyException) {
+        if (throwable is BadQueryException) {
             viewModelScope.launch {
                 repoPreferences.changeLanguage(Constants.DEFAULT_LANGUAGE)
                 repoPreferences.changeSortOrder(Constants.DEFAULT_SORT_TYPE)
@@ -112,11 +106,17 @@ class PopularReposViewModel @Inject constructor(
 
     private fun getReposFromRemote(query: String, sortOrder: Sort) {
         viewModelScope.launch(exceptionHandler) {
+            // if we are already fetching do not re-fetch
+            if (state.value.loading)
+                return@launch
             _state.update { it.copy(loading = true) }
             val reposFromRemote =
                 getPopularReposUseCase(query = query, sort = sortOrder, page = currentPage)
-            deleteAllRepos()
+            deleteAllReposUseCase()
             storeReposUseCase(reposFromRemote)
+            _state.update { it.copy(loading = false) }
+            if (_languageChanged.value)
+                _languageChanged.value = false
         }
     }
 
@@ -134,22 +134,22 @@ class PopularReposViewModel @Inject constructor(
             is PopularReposUIEvent.SelectNewSort -> {
                 viewModelScope.launch(dispatcher + exceptionHandler) {
                     currentPage = 1
-                    repoPreferences.changeSortOrder(event.newSort)
                     _shouldAnimateToStartOfTheList.value = true
+                    repoPreferences.changeSortOrder(event.newSort)
                 }
             }
             is PopularReposUIEvent.SelectNewLanguage -> {
                 viewModelScope.launch(dispatcher + exceptionHandler) {
-                    repoPreferences.changeLanguage(event.newLanguage)
-                    getReposFromRemote(formQuery(language = lang), sort)
                     currentPage = 1
                     _shouldAnimateToStartOfTheList.value = true
+                    repoPreferences.changeLanguage(languageSymbolToLanguageChar(event.newLanguage))
+                    _languageChanged.value = true
                 }
             }
         }
     }
 
-    fun loadMoreItems() {
+    private fun loadMoreItems() {
         currentPage++
         _state.update {
             it.copy(loading = true, isLoadingMoreItems = true)
@@ -164,12 +164,6 @@ class PopularReposViewModel @Inject constructor(
             _state.update {
                 PopularReposState(repos = it.repos + newRepos)
             }
-        }
-    }
-
-    private fun deleteAllRepos() {
-        viewModelScope.launch(dispatcher) {
-            deleteAllReposUseCase()
         }
     }
 
