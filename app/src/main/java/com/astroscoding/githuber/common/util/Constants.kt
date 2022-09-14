@@ -9,7 +9,7 @@ object Constants {
     const val SORT_PARAM = "sort"
     const val PAGE_PARAM = "page"
     const val PER_PAGE_PARAM = "per_page"
-    const val DEFAULT_LANGUAGE = "Kotlin"
+    const val DEFAULT_LANGUAGE = "kotlin"
     const val DEFAULT_QUERY = "language:$DEFAULT_LANGUAGE"
     val DEFAULT_SORT_TYPE = Sort.Stars
     const val DEFAULT_PAGE = 1

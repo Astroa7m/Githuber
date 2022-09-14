@@ -6,23 +6,19 @@ import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRep
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-// TODO: think of this bruh
 
 class GetPopularReposUseCase @Inject constructor(
     private val repository: PopularRepositoriesRepository
 ) {
-    // TODO: handle pagination later
-    // first get items from db
-    // if there are no items OR sortOrder has Changed OR queryHasChanged OR userRefreshed
-    // then fetch new items and put them in db
-    // changing of sort order or query will fire of this function again from the viewModel
     suspend operator fun invoke(
         query: String,
-        sort: Sort
+        sort: Sort,
+        page: Int
     ): List<Repo> {
         return repository.getPopularRepoRemote(
             query = query,
-            sort = sort
+            sort = sort,
+            page = page,
         )
     }
 

@@ -18,6 +18,7 @@ import okhttp3.mockwebserver.MockWebServer
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [LocalModule::class, RemoteModule::class])
@@ -58,11 +59,12 @@ object TestAppModule {
         @ApplicationContext context: Context,
         scope: CoroutineScope
     ): DataStore<Preferences> {
+        val random = Random.nextInt()
         return PreferenceDataStoreFactory
             .create(
                 scope = scope,
                 produceFile = {
-                    context.preferencesDataStoreFile("test_pref_file")
+                    context.preferencesDataStoreFile("test_pref_file-$random")
                 }
             )
     }

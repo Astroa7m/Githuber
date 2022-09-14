@@ -1,6 +1,8 @@
 package com.astroscoding.githuber.common.data.preferences
 
 import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
@@ -9,8 +11,13 @@ import com.astroscoding.githuber.common.domain.model.Sort
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -18,12 +25,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import javax.inject.Inject
-
-/**
- * Unfortunately each test should run alone and manually as there's an error
- * will be thrown complaining about having multiple instances of datastore though it is singleton in
- * test module. However, the error seems like it does not happen often so I will leave it for now.
- */
 
 @HiltAndroidTest
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,7 +52,7 @@ class RepoPreferencesTest {
 
 
     @Test
-    fun getInitialLanguageFromInitially_ReturnsDefaultValue() = runTest {
+    fun getInitialLanguage_returnsDefaultValue() = runTest {
         repoPreferences.language.test {
             assertThat(awaitItem()).isEqualTo(Constants.DEFAULT_LANGUAGE)
             cancelAndIgnoreRemainingEvents()
@@ -59,7 +60,7 @@ class RepoPreferencesTest {
     }
 
     @Test
-    fun getInitialSortFromInitially_ReturnsDefaultValue() = runTest {
+    fun getInitialSort_returnsDefaultValue() = runTest {
         repoPreferences.sortOrder.test {
             assertThat(awaitItem()).isEqualTo(Constants.DEFAULT_SORT_TYPE)
             cancelAndIgnoreRemainingEvents()
@@ -67,7 +68,7 @@ class RepoPreferencesTest {
     }
 
     @Test
-    fun storeLanguage_ReturnsNewlyStoredLanguage() = runTest {
+    fun storeLanguage_returnsNewlyStoredLanguage() = runTest {
         repoPreferences.changeLanguage(LANGUAGE)
 
         repoPreferences.language.test {
@@ -77,7 +78,7 @@ class RepoPreferencesTest {
     }
 
     @Test
-    fun storeSortOrder_ReturnsNewlyStoredSortOrder() = runTest {
+    fun storeSortOrder_returnsNewlyStoredSortOrder() = runTest {
         repoPreferences.changeSortOrder(SORT_ORDER)
 
         repoPreferences.sortOrder.test {
@@ -88,8 +89,7 @@ class RepoPreferencesTest {
 
     @After
     fun teardown() {
-        //useless
-        File(context.filesDir, "datastore/test_pref_file.preferences_pb").delete()
+        File(context.filesDir, "datastore").deleteRecursively()
     }
 
 }

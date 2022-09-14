@@ -1,7 +1,7 @@
 package com.astroscoding.githuber.common.domain.repository
 
-import com.astroscoding.githuber.common.domain.model.Sort
 import com.astroscoding.githuber.common.domain.model.Repo
+import com.astroscoding.githuber.common.domain.model.Sort
 import com.astroscoding.githuber.common.util.Constants
 import kotlinx.coroutines.flow.Flow
 

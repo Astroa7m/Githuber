@@ -3,8 +3,8 @@ package com.astroscoding.githuber.common.data.local
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import com.astroscoding.githuber.common.data.remote.util.TestFunctions.generateRepoEntity
-import com.astroscoding.githuber.common.data.remote.util.TestFunctions.generateReposEntity
+import com.astroscoding.githuber.common.util.TestFunctions.generateRepoEntity
+import com.astroscoding.githuber.common.util.TestFunctions.generateReposEntity
 import com.astroscoding.githuber.common.domain.model.Sort
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule

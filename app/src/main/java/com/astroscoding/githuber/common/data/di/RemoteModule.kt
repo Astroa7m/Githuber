@@ -1,8 +1,8 @@
 package com.astroscoding.githuber.common.data.di
 
 import com.astroscoding.githuber.common.data.remote.GithubApi
-import com.astroscoding.githuber.common.util.Constants
 import com.astroscoding.githuber.common.data.remote.interceptors.LoggingInterceptor
+import com.astroscoding.githuber.common.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

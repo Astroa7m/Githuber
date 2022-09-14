@@ -5,8 +5,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.astroscoding.githuber.common.data.local.RepositoryDatabase
 import com.astroscoding.githuber.common.util.Constants
-import com.astroscoding.githuber.common.data.remote.util.JsonReader
-import com.astroscoding.githuber.common.data.remote.util.TestFunctions.generateReposDomain
+import com.astroscoding.githuber.common.util.JsonReader
+import com.astroscoding.githuber.common.util.TestFunctions.generateReposDomain
 import com.astroscoding.githuber.common.domain.model.Sort
 import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRepository
 import com.google.common.truth.Truth.assertThat
@@ -62,7 +62,7 @@ class PopularRepositoriesRepositoryTest {
         )
         assertThat(result).hasSize(Constants.DEFAULT_PER_PAGE)
         assertThat(result.sortedByDescending { it.starsCount }).isEqualTo(result)
-        assertThat(result.random().language).isEqualTo(Constants.DEFAULT_LANGUAGE)
+        assertThat(result.random().language.lowercase()).isEqualTo(Constants.DEFAULT_LANGUAGE)
     }
 
     @Test

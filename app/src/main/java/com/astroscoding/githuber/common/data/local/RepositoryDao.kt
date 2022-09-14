@@ -2,7 +2,6 @@ package com.astroscoding.githuber.common.data.local
 
 import androidx.room.*
 import com.astroscoding.githuber.common.data.local.model.RepositoryEntity
-import com.astroscoding.githuber.common.domain.model.Sort
 import kotlinx.coroutines.flow.Flow
 
 @Dao

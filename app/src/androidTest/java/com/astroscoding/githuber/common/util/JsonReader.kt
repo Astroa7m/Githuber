@@ -1,4 +1,4 @@
-package com.astroscoding.githuber.common.data.remote.util
+package com.astroscoding.githuber.common.util
 
 import okio.buffer
 import okio.source

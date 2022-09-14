@@ -1,8 +1,11 @@
-package com.astroscoding.githuber.common.presentation
+package com.astroscoding.githuber.common.presentation.comp
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,59 +33,101 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.astroscoding.githuber.R
 import com.astroscoding.githuber.common.domain.model.Repo
-import com.astroscoding.githuber.popularrepos.presentation.PopularReposUIEvent
-import com.astroscoding.githuber.popularrepos.presentation.PopularReposViewModel
 import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun PopularReposComposable(
+fun ReposComposable(
     modifier: Modifier = Modifier,
-    viewModel: PopularReposViewModel = hiltViewModel(),
+    repos: List<Repo>,
+    loading: Boolean,
+    errorMessage: String,
+    onRefresh: (() -> Unit)? = null,
+    onLastItemReached: () -> Unit,
+    animate: Boolean,
+    onDoneAnimating: () -> Unit
 ) {
-    // TODO: collect as state with lifecycle
-    val state by viewModel.state.collectAsState()
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.loading)
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loading)
     val lazyListState = rememberLazyListState()
     val scrollContext = rememberScrollContext(listState = lazyListState)
 
-    if (scrollContext.isBottom){
-        viewModel.onEvent(PopularReposUIEvent.RequestMoreRepos)
+    LaunchedEffect(key1 = scrollContext.isBottom) {
+        if (scrollContext.isBottom && repos.isNotEmpty())
+            onLastItemReached()
+    }
+
+    LaunchedEffect(key1 = animate){
+        // some delay so we receive the freshly sorted list before scrolling
+        delay(500)
+        if (animate){
+            launch {
+                lazyListState.scrollToItem(0)
+            }.join()
+            onDoneAnimating()
+        }
     }
 
     SwipeRefresh(
         modifier = modifier,
         state = swipeRefreshState,
-        onRefresh = { viewModel.onEvent(PopularReposUIEvent.RefreshRepos) }
+        swipeEnabled = onRefresh != null,
+        onRefresh = { onRefresh?.let { it() } }
     ) {
         Box(
             contentAlignment = Alignment.Center
         ) {
-
-            if (state.loading)
-                CircularProgressIndicator()
-            if (state.errorMessage.isNotEmpty())
-                Toast.makeText(LocalContext.current, state.errorMessage, Toast.LENGTH_SHORT)
-                    .show()
-            LazyColumn(
-                contentPadding = PaddingValues(8.dp),
-                state = lazyListState
+            if (errorMessage.isNotEmpty())
+                Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
+            AnimatedVisibility(
+                visible = repos.isEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                items(state.repos) { repo ->
-                    PopularRepoItems(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        repo = repo,
-                    )
-                }
+                RepoPlaceHolder(Modifier.fillMaxWidth())
             }
+            AnimatedVisibility(
+                visible = repos.isNotEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                LazyColumn(
+                    contentPadding = PaddingValues(8.dp),
+                    state = lazyListState
+                ) {
+                    items(
+                        items = repos,
+                        key = {repo-> repo.id}
+                    ) { repo ->
+                        PopularRepoItems(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            repo = repo,
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+private fun RepoPlaceHolder(modifier: Modifier = Modifier) {
+    Column(modifier) {
+        repeat(5) {
+            RepoPlaceHolderItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
         }
     }
 }
@@ -113,6 +158,27 @@ fun PopularRepoItems(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(8.dp, 8.dp, 8.dp, 16.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RepoPlaceHolderItem(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val color by infiniteTransition.animateColor(
+        initialValue = MaterialTheme.colorScheme.surfaceVariant,
+        targetValue = MaterialTheme.colorScheme.surface,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    Card(modifier.height(250.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color)
         )
     }
 }
@@ -216,7 +282,6 @@ fun RepoNameAndDesc(modifier: Modifier = Modifier, name: String, description: St
                 val lastCharIndex = textLayoutResult.getLineEnd(maxTextLines - 1, true)
                 cutString = descriptionText.substring(0, lastCharIndex)
                     .dropLast(seeMore.length)
-                Log.d("SOMETAG", "$name: $cutString")
             }
         )
     }

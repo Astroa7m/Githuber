@@ -7,6 +7,7 @@ import com.astroscoding.githuber.common.domain.model.Repo
 import com.astroscoding.githuber.common.domain.model.Sort
 import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRepository
 import com.astroscoding.githuber.common.util.EmptyResponseBodyException
+import com.astroscoding.githuber.common.util.LimitExceededException
 import com.astroscoding.githuber.common.util.ResponseUnsuccessfulException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -55,15 +56,22 @@ class PopularRepositoriesRepositoryImpl @Inject constructor(
                 throw ResponseUnsuccessfulException()
             }
             if (response.isSuccessful) {
+                if (response.body()?.total_count == 0)
+                    throw EmptyResponseBodyException()
                 return response.body()?.let { body ->
                     body.repositories.map {
                         it.mapTo()
                     }
                 } ?: throw EmptyResponseBodyException()
             } else {
-                throw ResponseUnsuccessfulException("Nothing matched your queries")
+                if (response.code()==403) // user requesting too much
+                    throw LimitExceededException()
+                else (response.code()==422) // bad query
+                    throw ResponseUnsuccessfulException("Nothing matched your queries, Setting params to defaults")
             }
     }
+    //403 when error response
+    //422
 
     override suspend fun deleteAllRepos() {
         dao.deleteAllRepos()

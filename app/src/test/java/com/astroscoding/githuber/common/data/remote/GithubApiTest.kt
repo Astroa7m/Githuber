@@ -10,8 +10,8 @@ import com.astroscoding.githuber.common.util.Constants.Q_PARAM
 import com.astroscoding.githuber.common.util.Constants.REPOSITORIES_ENDPOINT
 import com.astroscoding.githuber.common.util.Constants.SORT_PARAM
 import com.astroscoding.githuber.common.data.remote.model.RepositoriesResultDto
-import com.astroscoding.githuber.common.data.remote.util.JsonReader
-import com.astroscoding.githuber.common.data.remote.util.TestFunctions
+import com.astroscoding.githuber.common.util.JsonReader
+import com.astroscoding.githuber.common.util.TestFunctions
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

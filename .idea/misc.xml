@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/astro/AndroidStudioProjects/Githuber/app/src/main/res/drawable/fork_ic.xml" value="0.2555" />
+        <entry key="..\:/astro/AndroidStudioProjects/Githuber/app/src/main/res/drawable/ic_asc_desc.xml" value="0.2255" />
         <entry key="..\:/astro/AndroidStudioProjects/Githuber/app/src/main/res/drawable/ic_license.xml" value="0.2255" />
+        <entry key="..\:/astro/AndroidStudioProjects/Githuber/app/src/main/res/drawable/ic_sort.xml" value="0.2555" />
         <entry key="..\:/astro/AndroidStudioProjects/Githuber/app/src/main/res/drawable/issue_ic.xml" value="0.2555" />
         <entry key="..\:/astro/AndroidStudioProjects/Githuber/app/src/main/res/drawable/license_ic.xml" value="0.1" />
       </map>

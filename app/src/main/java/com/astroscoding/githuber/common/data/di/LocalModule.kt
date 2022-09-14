@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.astroscoding.githuber.common.data.local.RepositoryDao
 import com.astroscoding.githuber.common.data.local.RepositoryDatabase
 import com.astroscoding.githuber.common.data.preferences.PreferencesConstants
 import dagger.Module

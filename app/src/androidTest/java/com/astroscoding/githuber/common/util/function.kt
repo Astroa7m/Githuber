@@ -1,4 +1,4 @@
-package com.astroscoding.githuber.common.data.remote.util
+package com.astroscoding.githuber.common.util
 
 import com.astroscoding.githuber.common.data.local.model.RepositoryEntity
 import com.astroscoding.githuber.common.domain.model.Owner
@@ -7,18 +7,11 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 
 object TestFunctions {
-    @OptIn(ExperimentalStdlibApi::class)
-    inline fun <reified T> getObjectFromJson(jsonString: String): T? {
-        val moshi = Moshi.Builder().build()
-        val adapter = moshi.adapter<T>()
-        return adapter.fromJson(jsonString)
-    }
-
     fun generateReposEntity(
         count: Int = 1,
-        starsCounts: List<Int> = listOf(0, 0, 0),
-        issuesCounts: List<Int> = listOf(0,0,0),
-        forksCounts: List<Int> = listOf(0,0,0)
+        starsCounts: List<Int> = IntArray(count){0}.toList(),
+        issuesCounts: List<Int> = IntArray(count){0}.toList(),
+        forksCounts: List<Int> = IntArray(count){0}.toList()
     ): List<RepositoryEntity> {
         val repoList = mutableListOf<RepositoryEntity>()
         repeat(count) { index ->
