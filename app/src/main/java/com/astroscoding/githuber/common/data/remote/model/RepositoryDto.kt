@@ -89,14 +89,15 @@ data class RepositoryDto(
 
     override fun mapTo() = Repo(
         id?:0,
-        name?:"null",
-        com.astroscoding.githuber.common.domain.model.Owner(0, owner?.login?:"null", owner?.avatar_url?:"null"),
-        description?:"null",
-        language?:"null",
+        name?:"N/A",
+        com.astroscoding.githuber.common.domain.model.Owner(0, owner?.login?:"null", owner?.avatar_url?:"null", owner?.html_url?:"no owner"),
+        description?:"N/A",
+        language?:"N/A",
         stargazers_count?:0,
         open_issues_count?:0,
         forks_count?:0,
         license?.name?:"no license",
-        topics?: listOf("null")
+        topics?: listOf("N/A"),
+        html_url?:""
     )
 }

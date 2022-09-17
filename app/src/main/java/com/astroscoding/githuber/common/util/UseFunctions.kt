@@ -1,7 +1,9 @@
 package com.astroscoding.githuber.common.util
 
-fun formQuery(queryString: String = "", language: String) =
-    "$queryString+language:$language"
+fun formQuery(queryString: String = "", language: String) : String{
+    val languageQuery = if (language=="any") "" else "language:$language"
+    return "$queryString+$languageQuery"
+}
 
 // github api returns partially irrelevant response
 // when setting language to either c++ or c#

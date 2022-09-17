@@ -11,5 +11,6 @@ data class Repo(
     val issuesCount: Int,
     val forksCount: Int,
     val licenseName: String,
-    val topics: List<String>
+    val topics: List<String>,
+    val htmlUrl: String
 )

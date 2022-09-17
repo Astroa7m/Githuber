@@ -9,12 +9,17 @@ interface RepositoryDao {
 
     @Transaction
     @Query(
-        "SELECT * FROM repositories ORDER BY " +
+        "SELECT * FROM repositories WHERE " +
+                "description LIKE '%' || :query || '%'" +
+                "OR name LIKE '%' || :query || '%'" +
+                "OR languages LIKE '%' || :query || '%'" +
+                "OR owner LIKE '%' || :query || '%'" +
+                "OR topics LIKE '%' || :query || '%' ORDER BY " +
                 "CASE WHEN :sort == 'stars' THEN starsCount END DESC," +
                 "CASE WHEN :sort == 'forks' THEN forksCount END DESC," +
                 "CASE WHEN :sort == 'issues' THEN issuesCount END DESC"
     )
-    fun getAllRepos(sort: String): Flow<List<RepositoryEntity>>
+    fun getAllRepos(sort: String, query: String): Flow<List<RepositoryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRepo(repositoryEntity: RepositoryEntity)

@@ -8,7 +8,7 @@ import com.astroscoding.githuber.common.util.Constants
 import com.astroscoding.githuber.common.util.JsonReader
 import com.astroscoding.githuber.common.util.TestFunctions.generateReposDomain
 import com.astroscoding.githuber.common.domain.model.Sort
-import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRepository
+import com.astroscoding.githuber.common.domain.repository.RepositoriesRepository
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
-class PopularRepositoriesRepositoryTest {
+class RepositoriesRepositoryTest {
 
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
@@ -39,7 +39,7 @@ class PopularRepositoriesRepositoryTest {
     @Inject
     lateinit var mockWebServer: MockWebServer
     @Inject
-    lateinit var repository: PopularRepositoriesRepository
+    lateinit var repository: RepositoriesRepository
 
     @Before
     fun setup() {
@@ -54,7 +54,7 @@ class PopularRepositoriesRepositoryTest {
             .setBody(responseString)
         mockWebServer.enqueue(mockedResponse)
 
-        val result = repository.getPopularRepoRemote(
+        val result = repository.getRepoRemote(
             Constants.DEFAULT_QUERY,
             Constants.DEFAULT_SORT_TYPE,
             page = Constants.DEFAULT_PAGE,
@@ -69,7 +69,7 @@ class PopularRepositoriesRepositoryTest {
     fun testStoreRepos_returnsTheSameStoredElements() = runTest {
         val repos = generateReposDomain(3)
         repository.storeRepos(repos = repos)
-        repository.getLocalRepos(Sort.Stars).test {
+        repository.getLocalRepos(Sort.Stars, "").test {
             assertThat(awaitItem()).containsExactlyElementsIn(repos)
             cancelAndIgnoreRemainingEvents()
         }
@@ -83,14 +83,14 @@ class PopularRepositoriesRepositoryTest {
             .setBody(responseString)
         mockWebServer.enqueue(mockedResponse)
 
-        val repos = repository.getPopularRepoRemote(
+        val repos = repository.getRepoRemote(
             Constants.DEFAULT_QUERY,
             Constants.DEFAULT_SORT_TYPE,
             Constants.DEFAULT_PAGE,
             Constants.DEFAULT_PER_PAGE
         )
         repository.storeRepos(repos)
-        repository.getLocalRepos(Sort.Stars).test {
+        repository.getLocalRepos(Sort.Stars, "").test {
             assertThat(awaitItem()).hasSize(repos.size)
             cancelAndIgnoreRemainingEvents()
         }

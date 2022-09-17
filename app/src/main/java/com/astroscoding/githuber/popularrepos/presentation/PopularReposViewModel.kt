@@ -1,43 +1,48 @@
 package com.astroscoding.githuber.popularrepos.presentation
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.astroscoding.githuber.common.data.preferences.RepoPreferences
 import com.astroscoding.githuber.common.domain.model.Sort
-import com.astroscoding.githuber.common.util.*
+import com.astroscoding.githuber.common.presentation.usecase.GetReposUseCase
+import com.astroscoding.githuber.common.util.BadQueryException
+import com.astroscoding.githuber.common.util.Constants
+import com.astroscoding.githuber.common.util.formQuery
+import com.astroscoding.githuber.common.util.languageSymbolToLanguageChar
 import com.astroscoding.githuber.popularrepos.presentation.usecase.DeleteAllReposUseCase
-import com.astroscoding.githuber.popularrepos.presentation.usecase.GetPopularReposUseCase
 import com.astroscoding.githuber.popularrepos.presentation.usecase.StoreReposUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class PopularReposViewModel @Inject constructor(
-    private val getPopularReposUseCase: GetPopularReposUseCase,
+    private val getReposUseCase: GetReposUseCase,
     private val storeReposUseCase: StoreReposUseCase,
     private val repoPreferences: RepoPreferences,
     private val deleteAllReposUseCase: DeleteAllReposUseCase,
     private val dispatcher: CoroutineContext
 ) : ViewModel() {
 
-    var lang: String by mutableStateOf(Constants.DEFAULT_LANGUAGE)
-        private set
-    var sort: Sort by mutableStateOf(Sort.EmptySort)
-        private set
+    val language = repoPreferences.language.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5000), Constants.DEFAULT_LANGUAGE
+    )
+    val sort = repoPreferences.sortOrder.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5000), Sort.EmptySort
+    )
 
 
     private val _state = MutableStateFlow(PopularReposState())
     val state = _state.asStateFlow()
     private val exceptionHandler =
         CoroutineExceptionHandler { _, throwable -> onFailure(throwable) }
-    var currentPage = 1
-        private set
+
+    private var currentPage = 1
 
     private val _refresh = MutableStateFlow(false)
     private val _languageChanged = MutableStateFlow(false)
@@ -54,18 +59,15 @@ class PopularReposViewModel @Inject constructor(
     private fun getRepos() {
         viewModelScope.launch(viewModelScope.coroutineContext + exceptionHandler) {
             combine(
-                repoPreferences.language,
-                repoPreferences.sortOrder,
+                language,
+                sort,
                 _refresh
-            ) { language, sortOrder, shouldRefresh ->
-                Triple(language, sortOrder, shouldRefresh)
-            }.flatMapLatest { (language, sortOrder, _) ->
-                lang = language
-                sort = sortOrder
-                getLocalRepos(sortOrder)
+            ) { _, _, _ ->
+            }.flatMapLatest {
+                getLocalRepos(sort.value)
             }.collect { reposFromDatabase ->
                 if (reposFromDatabase.isEmpty() || _refresh.value || _languageChanged.value) {
-                    getReposFromRemote(formQuery(language = lang), sort)
+                    getReposFromRemote(formQuery(language = language.value), sort.value)
                 }
                 if (!_state.value.loading) {
                     _state.update {
@@ -84,7 +86,7 @@ class PopularReposViewModel @Inject constructor(
     private suspend fun getLocalRepos(
         sortOrder: Sort
     ) = withContext(dispatcher) {
-        getPopularReposUseCase(sortOrder)
+        getReposUseCase(sortOrder)
     }
 
 
@@ -111,7 +113,7 @@ class PopularReposViewModel @Inject constructor(
                 return@launch
             _state.update { it.copy(loading = true) }
             val reposFromRemote =
-                getPopularReposUseCase(query = query, sort = sortOrder, page = currentPage)
+                getReposUseCase(query = query, sort = sortOrder, page = currentPage)
             deleteAllReposUseCase()
             storeReposUseCase(reposFromRemote)
             _state.update { it.copy(loading = false) }
@@ -155,9 +157,9 @@ class PopularReposViewModel @Inject constructor(
             it.copy(loading = true, isLoadingMoreItems = true)
         }
         viewModelScope.launch(dispatcher + exceptionHandler) {
-            val newRepos = getPopularReposUseCase(
-                formQuery(language = lang),
-                sort,
+            val newRepos = getReposUseCase(
+                formQuery(language = language.value),
+                sort.value,
                 currentPage
             )
             // won't save new fetched items locally as I only want to have 30 items when I relaunch the app

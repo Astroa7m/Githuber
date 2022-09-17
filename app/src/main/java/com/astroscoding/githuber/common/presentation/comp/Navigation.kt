@@ -8,20 +8,22 @@ import androidx.navigation.compose.composable
 import com.astroscoding.githuber.common.presentation.Destination
 import com.astroscoding.githuber.popularrepos.presentation.PopularReposViewModel
 import com.astroscoding.githuber.popularrepos.presentation.comp.PopularReposComposable
+import com.astroscoding.githuber.search.presentation.SearchReposViewModel
 import com.astroscoding.githuber.search.presentation.comp.SearchRepoComposable
 
 @Composable
 fun NavController(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    popularReposViewModel: PopularReposViewModel
+    popularReposViewModel: PopularReposViewModel,
+    searchReposViewModel: SearchReposViewModel
 ) {
     NavHost(navController = navController, startDestination = Destination.PopularRepos.route){
         composable(Destination.PopularRepos.route){
             PopularReposComposable(paddingValues = paddingValues, viewModel = popularReposViewModel)
         }
         composable(Destination.SearchRepos.route){
-            SearchRepoComposable(paddingValues = paddingValues)
+            SearchRepoComposable(paddingValues = paddingValues, viewModel = searchReposViewModel)
         }
     }
 }

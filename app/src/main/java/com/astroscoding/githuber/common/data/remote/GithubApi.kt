@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface GithubApi {
     @GET(Constants.REPOSITORIES_ENDPOINT)
-    suspend fun getPopularGithubRepos(
+    suspend fun getGithubRepos(
         @Query(Constants.Q_PARAM, encoded = true) searchQuery: String = Constants.DEFAULT_QUERY,
         @Query(Constants.SORT_PARAM) sort: String = Constants.DEFAULT_SORT_TYPE.sort /*maybe later change to get preferences for sorting*/,
         @Query(Constants.PAGE_PARAM) page: Int = Constants.DEFAULT_PAGE,

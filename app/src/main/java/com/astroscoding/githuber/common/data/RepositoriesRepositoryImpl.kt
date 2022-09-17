@@ -5,7 +5,7 @@ import com.astroscoding.githuber.common.data.local.model.RepositoryEntity
 import com.astroscoding.githuber.common.data.remote.GithubApi
 import com.astroscoding.githuber.common.domain.model.Repo
 import com.astroscoding.githuber.common.domain.model.Sort
-import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRepository
+import com.astroscoding.githuber.common.domain.repository.RepositoriesRepository
 import com.astroscoding.githuber.common.util.BadQueryException
 import com.astroscoding.githuber.common.util.EmptyResponseBodyException
 import com.astroscoding.githuber.common.util.LimitExceededException
@@ -16,15 +16,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PopularRepositoriesRepositoryImpl @Inject constructor(
+class RepositoriesRepositoryImpl @Inject constructor(
     private val api: GithubApi,
     database: RepositoryDatabase
-) : PopularRepositoriesRepository {
+) : RepositoriesRepository {
 
     private val dao = database.repositoriesDao
 
-    override fun getLocalRepos(sort: Sort): Flow<List<Repo>> {
-        return dao.getAllRepos(sort.sort).map { reposEntity ->
+    override fun getLocalRepos(sort: Sort, query: String): Flow<List<Repo>> {
+        return dao.getAllRepos(sort.sort, query).map { reposEntity ->
             reposEntity.map { repoEntity ->
                 repoEntity.mapTo()
             }
@@ -40,39 +40,39 @@ class PopularRepositoriesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPopularRepoRemote(
+    override suspend fun getRepoRemote(
         query: String,
         sort: Sort,
         page: Int,
         perPage: Int
     ): List<Repo> {
-            val response = try {
-                api.getPopularGithubRepos(
-                    searchQuery = query,
-                    sort = sort.sort,
-                    page = page,
-                    perPage = perPage
-                )
-            } catch (e: Exception){
-                throw ResponseUnsuccessfulException()
-            }
-            if (response.isSuccessful) {
-                // user enters weird query or language
-                // server responds with 200 but no items
-                // so we handle this
-                if (response.body()?.total_count == 0)
-                    throw BadQueryException()
-                return response.body()?.let { body ->
-                    body.repositories.map {
-                        it.mapTo()
-                    }
-                } ?: throw EmptyResponseBodyException()
-            } else {
-                if (response.code()==403) // user requesting too much
-                    throw LimitExceededException()
-                else (response.code()==422) // bad query
-                    throw BadQueryException()
-            }
+        val response = try {
+            api.getGithubRepos(
+                searchQuery = query,
+                sort = sort.sort,
+                page = page,
+                perPage = perPage
+            )
+        } catch (e: Exception) {
+            throw ResponseUnsuccessfulException()
+        }
+        if (response.isSuccessful) {
+            // user enters weird query or language
+            // server responds with 200 but no items
+            // so we handle this
+            if (response.body()?.total_count == 0)
+                throw BadQueryException()
+            return response.body()?.let { body ->
+                body.repositories.map {
+                    it.mapTo()
+                }
+            } ?: throw EmptyResponseBodyException()
+        } else {
+            if (response.code() == 403) // user requesting too much
+                throw LimitExceededException()
+            else (response.code() == 422) // bad query
+            throw BadQueryException()
+        }
     }
     //403 when error response
     //422

@@ -5,11 +5,11 @@ import com.astroscoding.githuber.common.domain.model.Sort
 import com.astroscoding.githuber.common.util.Constants
 import kotlinx.coroutines.flow.Flow
 
-interface PopularRepositoriesRepository {
+interface RepositoriesRepository {
 
     suspend fun storeRepos(repos: List<Repo>)
-    fun getLocalRepos(sort: Sort): Flow<List<Repo>>
-    suspend fun getPopularRepoRemote(
+    fun getLocalRepos(sort: Sort, query: String): Flow<List<Repo>>
+    suspend fun getRepoRemote(
         query: String,
         sort: Sort,
         page: Int = Constants.DEFAULT_PAGE,

@@ -51,7 +51,7 @@ class GithubApiTest {
             .setBody(responseString)
         mockWebServer.enqueue(mockedResponse)
 
-        val serviceResponse = githubApiService.getPopularGithubRepos()
+        val serviceResponse = githubApiService.getGithubRepos()
         val request = mockWebServer.takeRequest()
         assertThat(request.method).isEqualTo("GET")
         assertThat(request.path).isEqualTo(PATH)
@@ -69,7 +69,7 @@ class GithubApiTest {
             .setBody("{}")
             .setResponseCode(404)
         mockWebServer.enqueue(mockedResponse)
-        val serviceResponse = githubApiService.getPopularGithubRepos()
+        val serviceResponse = githubApiService.getGithubRepos()
         val request = mockWebServer.takeRequest()
         assertThat(request.method).isEqualTo("GET")
         assertThat(serviceResponse.isSuccessful).isFalse()

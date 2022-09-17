@@ -13,26 +13,29 @@ data class RepositoryEntity(
     val name: String,
     val owner: String,
     val ownerPhotoUrl: String,
+    val ownerHtmlUrl: String,
     val description: String,
     val languages: String,
     val starsCount: Int,
     val issuesCount: Int,
     val forksCount: Int,
     val licenseName: String,
-    val topics: String
+    val topics: String,
+    val htmlUrl: String
 ) : DataMapper<RepositoryEntity, Repo>{
 
     override fun mapTo() = Repo(
         id,
         name,
-        Owner(0, owner, ownerPhotoUrl),
+        Owner(0, owner, ownerPhotoUrl, ownerHtmlUrl),
         description,
         languages,
         starsCount,
         issuesCount,
         forksCount,
         licenseName,
-        topics.split(", ")
+        topics.split(", "),
+        htmlUrl
     )
 
     companion object{
@@ -41,13 +44,15 @@ data class RepositoryEntity(
             anotherEntity.name,
             anotherEntity.owner.username,
             anotherEntity.owner.avatarUrl,
+            anotherEntity.owner.htmlUrl,
             anotherEntity.description,
             anotherEntity.language,
             anotherEntity.starsCount,
             anotherEntity.issuesCount,
             anotherEntity.forksCount,
             anotherEntity.licenseName,
-            anotherEntity.topics.joinToString()
+            anotherEntity.topics.joinToString(),
+            anotherEntity.htmlUrl
         )
     }
 }

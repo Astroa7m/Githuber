@@ -39,11 +39,13 @@ object TestFunctions {
         "test",
         "test",
         "test",
-        starsCount,
-        issuesCount,
-        forksCount,
         "test",
-        "test"
+        issuesCount = issuesCount,
+        forksCount = forksCount,
+        starsCount = starsCount,
+        htmlUrl = "test",
+        licenseName = "test",
+        topics = "test"
     )
 
     fun generateReposDomain(count: Int = 1): List<Repo> {
@@ -58,14 +60,15 @@ object TestFunctions {
     fun generateRepoDomain(id: Long) = Repo(
         id,
         "test",
-        Owner(0, "test", "test"),
+        Owner(0, "test", "test", "test"),
         "test",
         "test",
         0,
         0,
         0,
         "test",
-        listOf("test")
+        listOf("test"),
+        ""
     )
 
 }

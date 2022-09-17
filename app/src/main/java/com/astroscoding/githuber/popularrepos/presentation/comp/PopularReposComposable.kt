@@ -1,10 +1,13 @@
 package com.astroscoding.githuber.popularrepos.presentation.comp
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.astroscoding.githuber.common.presentation.comp.ReposComposable
 import com.astroscoding.githuber.popularrepos.presentation.PopularReposUIEvent
 import com.astroscoding.githuber.popularrepos.presentation.PopularReposViewModel
@@ -21,10 +24,15 @@ fun PopularReposComposable(
         modifier = Modifier.padding(paddingValues),
         repos = state.repos,
         loading = state.loading,
-        errorMessage = state.errorMessage,
         onRefresh = { viewModel.onEvent(PopularReposUIEvent.RefreshRepos) },
         onLastItemReached = { viewModel.onEvent(PopularReposUIEvent.RequestMoreRepos) },
         animate = animate,
         onDoneAnimating = viewModel::onDoneAnimatingToStartOfList
     )
+    //temporarily
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.errorMessage) {
+        if (state.errorMessage.isNotEmpty())
+            Toast.makeText(context, state.errorMessage, Toast.LENGTH_SHORT).show()
+    }
 }

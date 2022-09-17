@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.astroscoding.githuber.R
 import com.astroscoding.githuber.common.domain.model.Sort
+import com.astroscoding.githuber.common.presentation.Destination
 import java.util.*
 
 @Composable
@@ -120,6 +121,7 @@ fun SortingMenu(
 @Composable
 fun LanguageDropDown(
     modifier: Modifier = Modifier,
+    currentScreen: Destination?=null,
     currentLanguage: String,
     onLanguageSelected: (String) -> Unit,
 ) {
@@ -138,6 +140,7 @@ fun LanguageDropDown(
             expanded = expanded,
             currentLanguage = currentLanguage,
             onLanguageSelected = onLanguageSelected,
+            currentScreen = currentScreen,
             onDismissed = { expanded = false }
         )
 
@@ -150,14 +153,20 @@ fun LanguageMenu(
     expanded: Boolean,
     currentLanguage: String,
     onLanguageSelected: (String) -> Unit,
+    currentScreen: Destination?=null,
     onDismissed: () -> Unit
 ) {
     var language by remember { mutableStateOf(currentLanguage) }
+    val langs = remember {
+        currentScreen?.let {
+            languages.toMutableList().apply { add(0, "any") }
+        } ?: languages
+    }
     var launchTypeLanguageDialog by remember { mutableStateOf(false) }
     var createCustomLanguageItem by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = currentLanguage){
-        createCustomLanguageItem = currentLanguage.lowercase() !in languages
+        createCustomLanguageItem = currentLanguage.lowercase() !in langs
     }
 
     DropdownMenu(
@@ -189,7 +198,7 @@ fun LanguageMenu(
             )
         }
 
-        languages.forEach {
+        langs.forEach {
 
             DropdownMenuItem(text = {
                 Text(text = it.replaceFirstChar {

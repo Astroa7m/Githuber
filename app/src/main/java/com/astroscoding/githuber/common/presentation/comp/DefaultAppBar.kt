@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.astroscoding.githuber.common.domain.model.Sort
 
+
 @Composable
 fun DefaultAppBar(
     modifier: Modifier = Modifier,

@@ -1,6 +1,5 @@
 package com.astroscoding.githuber.common.presentation.comp
 
-import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
@@ -10,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,7 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.astroscoding.githuber.R
+import com.astroscoding.githuber.common.domain.model.Owner
 import com.astroscoding.githuber.common.domain.model.Repo
 import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
@@ -48,7 +52,6 @@ fun ReposComposable(
     modifier: Modifier = Modifier,
     repos: List<Repo>,
     loading: Boolean,
-    errorMessage: String,
     onRefresh: (() -> Unit)? = null,
     onLastItemReached: () -> Unit,
     animate: Boolean,
@@ -63,10 +66,10 @@ fun ReposComposable(
             onLastItemReached()
     }
 
-    LaunchedEffect(key1 = animate){
+    LaunchedEffect(key1 = animate) {
         // some delay so we receive the freshly sorted list before scrolling
         delay(500)
-        if (animate){
+        if (animate) {
             launch {
                 lazyListState.scrollToItem(0)
             }.join()
@@ -83,8 +86,7 @@ fun ReposComposable(
         Box(
             contentAlignment = Alignment.Center
         ) {
-            if (errorMessage.isNotEmpty())
-                Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
+
             AnimatedVisibility(
                 visible = repos.isEmpty(),
                 enter = fadeIn(),
@@ -103,9 +105,9 @@ fun ReposComposable(
                 ) {
                     items(
                         items = repos,
-                        key = {repo-> repo.id}
+                        key = { repo -> repo.id }
                     ) { repo ->
-                        PopularRepoItems(
+                        RepoItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp),
@@ -134,30 +136,106 @@ private fun RepoPlaceHolder(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PopularRepoItems(
+fun RepoItem(
     modifier: Modifier = Modifier,
     repo: Repo
 ) {
-    Card(modifier) {
-        RepoNameAndDesc(
+    val uriHandler = LocalUriHandler.current
+    var expandMenu by remember {
+        mutableStateOf(false)
+    }
+    var pairOffset by remember {
+        mutableStateOf(Pair(0.dp, 0.dp))
+    }
+    Box(
+        modifier = modifier.pointerInput(Unit) {
+            detectTapGestures(
+                onLongPress = {
+                    pairOffset = Pair(it.x.toDp(), it.y.toDp())
+                    expandMenu = true
+                }
+            )
+        }
+    ) {
+        Card {
+            RepoNameAndDesc(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp, 16.dp, 8.dp, 8.dp),
+                name = repo.name,
+                description = repo.description
+            )
+            RepoCountsDetails(repo = repo, modifier = Modifier.padding(8.dp))
+            LanguageText(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp),
+                language = repo.language
+            )
+
+            RepoOwner(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                repoOwner = repo.owner
+            )
+
+            Tags(
+                repo = repo,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp, 8.dp, 8.dp, 16.dp)
+            )
+        }
+        Box(modifier = Modifier.absoluteOffset(pairOffset.first, pairOffset.second)) {
+            DropdownMenu(
+                expanded = expandMenu,
+                onDismissRequest = { expandMenu = false },
+            ) {
+                val map = remember {
+                    mapOf(
+                        "go to repository?" to repo.htmlUrl,
+                        "go to owner?" to repo.owner.htmlUrl
+                    )
+                }
+                map.entries.forEach { (label, url) ->
+                    DropdownMenuItem(text = {
+                        Text(text = label)
+                    }, onClick = {
+                        uriHandler.openUri(url)
+                    })
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RepoOwner(
+    modifier: Modifier = Modifier,
+    repoOwner: Owner
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        AsyncImage(
+            model = repoOwner.avatarUrl,
+            contentDescription = "${repoOwner.username}'s profile url",
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp, 16.dp, 8.dp, 8.dp),
-            name = repo.name,
-            description = repo.description
-        )
-        RepoCountsDetails(repo = repo, modifier = Modifier.padding(8.dp))
-        LanguageText(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(8.dp),
-            language = repo.language
-        )
-        Tags(
-            repo = repo,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(8.dp, 8.dp, 8.dp, 16.dp)
+                .size(40.dp)
+                .clip(CircleShape),
+
+            )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Text(
+            text = repoOwner.username,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium
         )
     }
 }
@@ -303,6 +381,16 @@ fun RepoCountsDetails(
         //stars
         AssistChip(
             onClick = {},
+            enabled = false,
+            colors = AssistChipDefaults.assistChipColors(
+                disabledContainerColor = Color.Transparent,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            border = AssistChipDefaults.assistChipBorder(
+                disabledBorderColor = MaterialTheme.colorScheme.outline
+            ),
             label = { Text(text = repo.starsCount.toString()) },
             leadingIcon = {
                 Icon(
@@ -318,6 +406,16 @@ fun RepoCountsDetails(
         //forks
         AssistChip(
             onClick = {},
+            enabled = false,
+            colors = AssistChipDefaults.assistChipColors(
+                disabledContainerColor = Color.Transparent,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            border = AssistChipDefaults.assistChipBorder(
+                disabledBorderColor = MaterialTheme.colorScheme.outline
+            ),
             label = { Text(text = repo.forksCount.toString()) },
             leadingIcon = {
                 Icon(
@@ -332,6 +430,16 @@ fun RepoCountsDetails(
         //issues
         AssistChip(
             onClick = {},
+            enabled = false,
+            colors = AssistChipDefaults.assistChipColors(
+                disabledContainerColor = Color.Transparent,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            border = AssistChipDefaults.assistChipBorder(
+                disabledBorderColor = MaterialTheme.colorScheme.outline
+            ),
             label = { Text(text = repo.issuesCount.toString()) },
             leadingIcon = {
                 Icon(
@@ -346,6 +454,16 @@ fun RepoCountsDetails(
         //license
         AssistChip(
             onClick = {},
+            enabled = false,
+            colors = AssistChipDefaults.assistChipColors(
+                disabledContainerColor = Color.Transparent,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            border = AssistChipDefaults.assistChipBorder(
+                disabledBorderColor = MaterialTheme.colorScheme.outline
+            ),
             label = { Text(text = repo.licenseName) },
             leadingIcon = {
                 Icon(
@@ -355,31 +473,5 @@ fun RepoCountsDetails(
                 )
             }
         )
-    }
-}
-
-@Composable
-fun TextedIcon(
-    modifier: Modifier = Modifier,
-    label: @Composable (() -> Unit),
-    icon: @Composable (() -> Unit)
-) {
-    Box(
-        modifier
-            .border(
-                BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.primary
-                ), MaterialTheme.shapes.extraLarge
-            )
-            .padding(8.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            label()
-            icon()
-        }
     }
 }

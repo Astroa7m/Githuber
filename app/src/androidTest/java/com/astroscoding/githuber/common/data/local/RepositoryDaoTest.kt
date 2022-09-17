@@ -1,11 +1,13 @@
 package com.astroscoding.githuber.common.data.local
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.compose.ui.unit.Constraints
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.astroscoding.githuber.common.util.TestFunctions.generateRepoEntity
 import com.astroscoding.githuber.common.util.TestFunctions.generateReposEntity
 import com.astroscoding.githuber.common.domain.model.Sort
+import com.astroscoding.githuber.common.util.Constants
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -44,7 +46,7 @@ class RepositoryDaoTest {
     fun testInsertingOneRepo() = runTest {
         val repo = generateReposEntity().first()
         repoDao.insertRepo(repo)
-        repoDao.getAllRepos(Sort.Stars.sort).test {
+        repoDao.getAllRepos(Sort.Stars.sort, Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).contains(repo)
             cancelAndIgnoreRemainingEvents()
         }
@@ -56,7 +58,7 @@ class RepositoryDaoTest {
         repos.forEach {
             repoDao.insertRepo(it)
         }
-        repoDao.getAllRepos(Sort.Stars.sort).test {
+        repoDao.getAllRepos(Sort.Stars.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).hasSize(3)
             cancelAndIgnoreRemainingEvents()
         }
@@ -68,12 +70,12 @@ class RepositoryDaoTest {
         repos.forEach {
             repoDao.insertRepo(it)
         }
-        repoDao.getAllRepos(Sort.Stars.sort).test {
+        repoDao.getAllRepos(Sort.Stars.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).containsExactlyElementsIn(repos)
             cancelAndIgnoreRemainingEvents()
         }
         repoDao.deleteAllRepos()
-        repoDao.getAllRepos(Sort.Stars.sort).test {
+        repoDao.getAllRepos(Sort.Stars.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).isEmpty()
             cancelAndIgnoreRemainingEvents()
         }
@@ -85,7 +87,7 @@ class RepositoryDaoTest {
         val repo1 = generateRepoEntity(1)
         repoDao.insertRepo(repo0)
         repoDao.insertRepo(repo1)
-        repoDao.getAllRepos(Sort.Stars.sort).test {
+        repoDao.getAllRepos(Sort.Stars.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).hasSize(1)
         }
     }
@@ -96,7 +98,7 @@ class RepositoryDaoTest {
         repos.forEach { repo->
             repoDao.insertRepo(repo)
         }
-        repoDao.getAllRepos(Sort.Forks.sort).test {
+        repoDao.getAllRepos(Sort.Forks.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).isEqualTo(repos.sortedByDescending { it.forksCount })
         }
     }
@@ -107,7 +109,7 @@ class RepositoryDaoTest {
         repos.forEach { repo->
             repoDao.insertRepo(repo)
         }
-        repoDao.getAllRepos(Sort.Stars.sort).test {
+        repoDao.getAllRepos(Sort.Stars.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).isEqualTo(repos.sortedByDescending { it.starsCount })
         }
     }
@@ -118,7 +120,7 @@ class RepositoryDaoTest {
         repos.forEach { repo->
             repoDao.insertRepo(repo)
         }
-        repoDao.getAllRepos(Sort.Forks.sort).test {
+        repoDao.getAllRepos(Sort.Forks.sort,Constants.DEFAULT_QUERY).test {
             assertThat(awaitItem()).isEqualTo(repos.sortedByDescending { it.issuesCount })
         }
     }

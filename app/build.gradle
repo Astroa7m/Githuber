@@ -130,5 +130,6 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
 
-
+    // coil
+    implementation "io.coil-kt:coil-compose:$coil_version"
 }

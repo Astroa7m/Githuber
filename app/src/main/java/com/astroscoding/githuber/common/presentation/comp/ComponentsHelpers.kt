@@ -75,7 +75,11 @@ private val languagesColors = languages.mapIndexed{ index, lang ->
 }.toMap()
 
 fun getLanguageColor(language: String): Color {
-    return Color(android.graphics.Color.parseColor("#${languagesColors.get(language.lowercase()) ?: DEFAULT_COLOR}"))
+    val color = if (language == "any")
+        "#f3f6f4"
+    else
+        "#${languagesColors.get(language.lowercase()) ?: DEFAULT_COLOR}"
+    return Color(android.graphics.Color.parseColor(color))
 }
 
 data class ScrollContext(

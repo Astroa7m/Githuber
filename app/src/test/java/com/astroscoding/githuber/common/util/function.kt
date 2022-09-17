@@ -40,14 +40,15 @@ object TestFunctions {
     ) = Repo(
         id,
         "test",
-        Owner(0, "test", "test"),
+        Owner(0, "test", "test", "test"),
         "test",
         "test",
         starsCount,
         issuesCount,
         forksCount,
         "test",
-        listOf("test")
+        listOf("test"),
+        "test"
     )
 
 }

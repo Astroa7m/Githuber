@@ -1,7 +1,7 @@
 package com.astroscoding.githuber.common.data.di
 
-import com.astroscoding.githuber.common.data.PopularRepositoriesRepositoryImpl
-import com.astroscoding.githuber.common.domain.repository.PopularRepositoriesRepository
+import com.astroscoding.githuber.common.data.RepositoriesRepositoryImpl
+import com.astroscoding.githuber.common.domain.repository.RepositoriesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryBinding {
 
     @Binds
-    abstract fun bindRepository(repository: PopularRepositoriesRepositoryImpl) : PopularRepositoriesRepository
+    abstract fun bindRepository(repository: RepositoriesRepositoryImpl) : RepositoriesRepository
 }
