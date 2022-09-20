@@ -1,0 +1,10 @@
+apply from: "$rootProject.projectDir/android-library.gradle"
+
+android {
+    namespace 'com.astroscoding.popularrepos'
+}
+
+dependencies {
+    // common module
+    implementation project(":common")
+}

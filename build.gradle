@@ -1,5 +1,10 @@
 buildscript {
     ext {
+        compileSdk = 32
+        misSdk = 21
+        targetSdk = compileSdk
+        versionCode = 1
+        versionName = "1.0"
         androidx_junit_version = '1.1.3'
         androidx_core_testing_version = '2.1.0'
         compose_version = '1.1.0-beta01'

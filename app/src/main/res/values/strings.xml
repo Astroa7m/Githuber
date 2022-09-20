@@ -1,4 +1,3 @@
 <resources>
     <string name="app_name">Githuber</string>
-    <string name="search_text">Let\'s look up together, make use of the above search field and filters to find your desired user, repository, or a specific file.</string>
 </resources>

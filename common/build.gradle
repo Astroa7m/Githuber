@@ -1,0 +1,16 @@
+apply from: "$rootProject.projectDir/android-library.gradle"
+
+android {
+
+    sourceSets {
+        debug {
+            res {
+                srcDirs 'src\\debug\\res'
+            }
+        }
+    }
+    namespace 'com.astroscoding.common'
+    defaultConfig {
+        consumerProguardFiles "consumer-rules.pro"
+    }
+}
