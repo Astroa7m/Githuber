@@ -14,6 +14,7 @@ import com.astroscoding.common.presentation.comp.DefaultAppBar
 import com.astroscoding.common.presentation.comp.ReposBottomNavigationBar
 import com.astroscoding.common.presentation.ui.theme.GithuberTheme
 import com.astroscoding.common.util.languageCharToLanguageSymbol
+import com.astroscoding.navigation.GitHuberNavHost
 import com.astroscoding.popularrepos.presentation.PopularReposViewModel
 import com.astroscoding.search.presentation.SearchReposViewModel
 import dagger.hilt.android.AndroidEntryPoint
