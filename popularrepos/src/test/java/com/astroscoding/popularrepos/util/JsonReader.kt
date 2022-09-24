@@ -1,4 +1,4 @@
-package com.astroscoding.common.util
+package com.astroscoding.popularrepos.util
 
 import okio.buffer
 import okio.source

@@ -36,6 +36,19 @@ object RemoteModule {
             .create(GithubApi::class.java)
     }
 
+    /*@Named("lazyasf")
+    @Provides
+    @Singleton
+    fun provideGithubApiForSingleCallCuzIamLazyToMakeItDynamic(okHttpClient: OkHttpClient): GithubApi {
+        return Retrofit.Builder()
+            .baseUrl("http://localhost/")
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+            .create(GithubApi::class.java)
+    }*/
+
+
     @Provides
     @Singleton
     fun provideLoggingInterceptor(loggingInterceptor: LoggingInterceptor): HttpLoggingInterceptor {
@@ -43,5 +56,6 @@ object RemoteModule {
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         return interceptor
     }
+
 
 }

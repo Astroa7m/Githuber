@@ -53,7 +53,8 @@ fun ReposComposable(
     onRefresh: (() -> Unit)? = null,
     onLastItemReached: () -> Unit,
     animate: Boolean,
-    onDoneAnimating: () -> Unit
+    onDoneAnimating: () -> Unit,
+    onRepoClicked: (repo: Repo) -> Unit
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loading)
     val lazyListState = rememberLazyListState()
@@ -110,6 +111,9 @@ fun ReposComposable(
                                 .fillMaxWidth()
                                 .padding(8.dp),
                             repo = repo,
+                            onRepoClicked = {
+                                onRepoClicked(repo)
+                            }
                         )
                     }
                 }
@@ -136,7 +140,8 @@ private fun RepoPlaceHolder(modifier: Modifier = Modifier) {
 @Composable
 fun RepoItem(
     modifier: Modifier = Modifier,
-    repo: Repo
+    repo: Repo,
+    onRepoClicked: (() -> Unit)? = null
 ) {
     val uriHandler = LocalUriHandler.current
     var expandMenu by remember {
@@ -151,6 +156,11 @@ fun RepoItem(
                 onLongPress = {
                     pairOffset = Pair(it.x.toDp(), it.y.toDp())
                     expandMenu = true
+                },
+                onTap = {
+                    onRepoClicked?.let {
+                        it()
+                    }
                 }
             )
         }
@@ -185,23 +195,26 @@ fun RepoItem(
                     .padding(8.dp, 8.dp, 8.dp, 16.dp)
             )
         }
-        Box(modifier = Modifier.absoluteOffset(pairOffset.first, pairOffset.second)) {
-            DropdownMenu(
-                expanded = expandMenu,
-                onDismissRequest = { expandMenu = false },
-            ) {
-                val map = remember {
-                    mapOf(
-                        "go to repository?" to repo.htmlUrl,
-                        "go to owner?" to repo.owner.htmlUrl
-                    )
-                }
-                map.entries.forEach { (label, url) ->
-                    DropdownMenuItem(text = {
-                        Text(text = label)
-                    }, onClick = {
-                        uriHandler.openUri(url)
-                    })
+        // only show dropdown when we are on the details screen
+        if(onRepoClicked == null){
+            Box(modifier = Modifier.absoluteOffset(pairOffset.first, pairOffset.second)) {
+                DropdownMenu(
+                    expanded = expandMenu,
+                    onDismissRequest = { expandMenu = false },
+                ) {
+                    val map = remember {
+                        mapOf(
+                            "go to repository?" to repo.htmlUrl,
+                            "go to owner?" to repo.owner.htmlUrl
+                        )
+                    }
+                    map.entries.forEach { (label, url) ->
+                        DropdownMenuItem(text = {
+                            Text(text = label)
+                        }, onClick = {
+                            uriHandler.openUri(url)
+                        })
+                    }
                 }
             }
         }
@@ -369,84 +382,88 @@ fun RepoCountsDetails(
     modifier: Modifier = Modifier,
     repo: Repo,
 ) {
-
     FlowRow(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxWidth(),
         mainAxisAlignment = FlowMainAxisAlignment.Center,
         crossAxisAlignment = FlowCrossAxisAlignment.Center,
         crossAxisSpacing = 8.dp
     ) {
         //stars
-        AssistChip(
-            onClick = {},
-            enabled = false,
-            colors = AssistChipDefaults.assistChipColors(
-                disabledContainerColor = Color.Transparent,
-                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
-                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
-                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            border = AssistChipDefaults.assistChipBorder(
-                disabledBorderColor = MaterialTheme.colorScheme.outline
-            ),
-            label = { Text(text = repo.starsCount.toString()) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "Repo stars",
-                    modifier = Modifier.size(25.dp)
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
+        if (repo.starsCount != 0){
+            AssistChip(
+                onClick = {},
+                enabled = false,
+                colors = AssistChipDefaults.assistChipColors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                    disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                    disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                border = AssistChipDefaults.assistChipBorder(
+                    disabledBorderColor = MaterialTheme.colorScheme.outline
+                ),
+                label = { Text(text = repo.starsCount.toString()) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Repo stars",
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+            )
+        }
 
         //forks
-        AssistChip(
-            onClick = {},
-            enabled = false,
-            colors = AssistChipDefaults.assistChipColors(
-                disabledContainerColor = Color.Transparent,
-                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
-                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
-                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            border = AssistChipDefaults.assistChipBorder(
-                disabledBorderColor = MaterialTheme.colorScheme.outline
-            ),
-            label = { Text(text = repo.forksCount.toString()) },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.fork_ic),
-                    contentDescription = "Repo stars",
-                    modifier = Modifier.size(25.dp)
-                )
-            }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-
+        if (repo.forksCount != 0){
+            Spacer(modifier = Modifier.width(8.dp))
+            AssistChip(
+                onClick = {},
+                enabled = false,
+                colors = AssistChipDefaults.assistChipColors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                    disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                    disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                border = AssistChipDefaults.assistChipBorder(
+                    disabledBorderColor = MaterialTheme.colorScheme.outline
+                ),
+                label = { Text(text = repo.forksCount.toString()) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.fork_ic),
+                        contentDescription = "Repo stars",
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+            )
+        }
         //issues
-        AssistChip(
-            onClick = {},
-            enabled = false,
-            colors = AssistChipDefaults.assistChipColors(
-                disabledContainerColor = Color.Transparent,
-                disabledLabelColor = MaterialTheme.colorScheme.onSurface,
-                disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
-                disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            border = AssistChipDefaults.assistChipBorder(
-                disabledBorderColor = MaterialTheme.colorScheme.outline
-            ),
-            label = { Text(text = repo.issuesCount.toString()) },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.issue_ic),
-                    contentDescription = "Repo stars",
-                    modifier = Modifier.size(25.dp),
-                )
-            }
-        )
+        if (repo.issuesCount != 0){
+            Spacer(modifier = Modifier.width(8.dp))
+            AssistChip(
+                onClick = {},
+                enabled = false,
+                colors = AssistChipDefaults.assistChipColors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                    disabledLeadingIconContentColor = MaterialTheme.colorScheme.primary,
+                    disabledTrailingIconContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                border = AssistChipDefaults.assistChipBorder(
+                    disabledBorderColor = MaterialTheme.colorScheme.outline
+                ),
+                label = { Text(text = repo.issuesCount.toString()) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.issue_ic),
+                        contentDescription = "Repo stars",
+                        modifier = Modifier.size(25.dp),
+                    )
+                }
+            )
+        }
+
         Spacer(modifier = Modifier.width(8.dp))
 
         //license

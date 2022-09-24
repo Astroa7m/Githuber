@@ -1,6 +1,7 @@
 buildscript {
     ext {
-        compileSdk = 32
+        applicationId = "com.astroscoding.githuber"
+        compileSdk = 33
         misSdk = 21
         targetSdk = compileSdk
         versionCode = 1

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Githuber</string>
+    <string name="title_activity_dynamic">DynamicActivity</string>
+    <string name="host">www.githuberapp.com</string>
+    <string name="scheme">https</string>
+    <string name="dynamic_feature_title">Details Feature</string>
 </resources>

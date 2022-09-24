@@ -30,8 +30,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:scheme="githuber"
-                    android:host="www.githuber.com"/>
+                    android:host="@string/host"
+                    android:scheme="@string/scheme"
+                    android:path="/rest"/>
             </intent-filter>
 
         </activity>

@@ -88,16 +88,17 @@ data class RepositoryDto(
 ) : DataMapper<RepositoryDto, Repo> {
 
     override fun mapTo() = Repo(
-        id?:0,
-        name?:"N/A",
-        com.astroscoding.common.domain.model.Owner(0, owner?.login?:"null", owner?.avatar_url?:"null", owner?.html_url?:"no owner"),
-        description?:"N/A",
-        language?:"N/A",
-        stargazers_count?:0,
-        open_issues_count?:0,
-        forks_count?:0,
-        license?.name?:"no license",
-        topics?: listOf("N/A"),
-        html_url?:""
+        id = id?:0,
+        name = name?:"",
+        owner = com.astroscoding.common.domain.model.Owner(owner?.id ?:0, owner?.login?:"", owner?.avatar_url?:"", owner?.html_url?:""),
+        description = description?:"",
+        language = language?:"",
+        starsCount = stargazers_count?:0,
+        issuesCount = open_issues_count?:0,
+        forksCount = forks_count?:0,
+        licenseName = license?.name?:"",
+        topics = topics?: listOf(""),
+        htmlUrl = this.html_url ?:"",
+        url = url ?: ""
     )
 }

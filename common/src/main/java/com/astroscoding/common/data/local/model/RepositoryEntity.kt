@@ -21,38 +21,41 @@ data class RepositoryEntity(
     val forksCount: Int,
     val licenseName: String,
     val topics: String,
-    val htmlUrl: String
+    val htmlUrl: String,
+    val url: String
 ) : DataMapper<RepositoryEntity, Repo> {
 
     override fun mapTo() = Repo(
-        id,
-        name,
-        Owner(0, owner, ownerPhotoUrl, ownerHtmlUrl),
-        description,
-        languages,
-        starsCount,
-        issuesCount,
-        forksCount,
-        licenseName,
-        topics.split(", "),
-        htmlUrl
+        id = id,
+        name = name,
+        owner = Owner(0, owner, ownerPhotoUrl, ownerHtmlUrl),
+        description = description,
+        language = languages,
+        starsCount = starsCount,
+        issuesCount = issuesCount,
+        forksCount = forksCount,
+        licenseName = licenseName,
+        topics = topics.split(", "),
+        htmlUrl = htmlUrl,
+        url = url
     )
 
     companion object{
         fun mapFrom(anotherEntity: Repo) = RepositoryEntity(
-            anotherEntity.id,
-            anotherEntity.name,
-            anotherEntity.owner.username,
-            anotherEntity.owner.avatarUrl,
-            anotherEntity.owner.htmlUrl,
-            anotherEntity.description,
-            anotherEntity.language,
-            anotherEntity.starsCount,
-            anotherEntity.issuesCount,
-            anotherEntity.forksCount,
-            anotherEntity.licenseName,
-            anotherEntity.topics.joinToString(),
-            anotherEntity.htmlUrl
+            id = anotherEntity.id,
+            name = anotherEntity.name,
+            owner = anotherEntity.owner.username,
+            ownerPhotoUrl = anotherEntity.owner.avatarUrl,
+            ownerHtmlUrl = anotherEntity.owner.htmlUrl,
+            description = anotherEntity.description,
+            languages = anotherEntity.language,
+            starsCount = anotherEntity.starsCount,
+            issuesCount = anotherEntity.issuesCount,
+            forksCount = anotherEntity.forksCount,
+            licenseName = anotherEntity.licenseName,
+            topics = anotherEntity.topics.joinToString(),
+            htmlUrl = anotherEntity.htmlUrl,
+            url = anotherEntity.url
         )
     }
 }

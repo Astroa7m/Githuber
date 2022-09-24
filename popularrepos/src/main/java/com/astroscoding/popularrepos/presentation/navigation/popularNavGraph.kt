@@ -1,16 +1,16 @@
-package com.astroscoding.navigation
+package com.astroscoding.popularrepos.presentation.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.astroscoding.common.domain.model.Repo
 import com.astroscoding.common.presentation.Destination
 import com.astroscoding.popularrepos.presentation.PopularReposViewModel
 import com.astroscoding.popularrepos.presentation.comp.PopularReposComposable
 
 fun NavGraphBuilder.popularNavGraph(
-    paddingValues: PaddingValues,
-    popularReposViewModel: PopularReposViewModel
+    popularReposViewModel: PopularReposViewModel,
+    onRepoClicked: (repo: Repo) -> Unit
 ) {
     navigation(
         startDestination = Destination.PopularRepos.route,
@@ -18,8 +18,8 @@ fun NavGraphBuilder.popularNavGraph(
     ) {
         composable(Destination.PopularRepos.route) {
             PopularReposComposable(
-                paddingValues = paddingValues,
-                viewModel = popularReposViewModel
+                viewModel = popularReposViewModel,
+                onRepoClicked = onRepoClicked
             )
         }
     }

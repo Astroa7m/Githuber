@@ -15,5 +15,6 @@ interface RepositoriesRepository {
         page: Int = Constants.DEFAULT_PAGE,
         perPage: Int = Constants.DEFAULT_PER_PAGE
     ): List<Repo>
+
     suspend fun deleteAllRepos()
 }

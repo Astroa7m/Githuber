@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution">
+
+    <dist:module
+        dist:instant='false'
+        dist:title="@string/dynamic_feature_title">
+        <dist:deleivery>
+            <dist:on-demand />
+        </dist:deleivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+    <application>
+        <activity
+            android:name=".DynamicActivity"
+            android:exported="true"
+            android:label="@string/title_activity_dynamic"
+            android:theme="@style/Theme.Githuber">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+            <intent-filter android:label="@string/title_activity_dynamic">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="@string/host"
+                    android:path="/dynamic_sharing_feature"
+                    android:scheme="@string/scheme" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

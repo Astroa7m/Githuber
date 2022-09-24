@@ -1,16 +1,17 @@
-package com.astroscoding.navigation
+package com.astroscoding.search.presentation.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.astroscoding.common.domain.model.Repo
 import com.astroscoding.common.presentation.Destination
 import com.astroscoding.search.presentation.SearchReposViewModel
 import com.astroscoding.search.presentation.comp.SearchRepoComposable
 
 fun NavGraphBuilder.searchNavGraph(
-    paddingValues: PaddingValues,
-    searchReposViewModel: SearchReposViewModel
+    searchReposViewModel: SearchReposViewModel,
+    onRepoClicked: (repo: Repo) -> Unit
 ){
     navigation(
         startDestination = Destination.SearchRepos.route,
@@ -18,8 +19,8 @@ fun NavGraphBuilder.searchNavGraph(
     ) {
         composable(Destination.SearchRepos.route) {
             SearchRepoComposable(
-                paddingValues = paddingValues,
-                viewModel = searchReposViewModel
+                viewModel = searchReposViewModel,
+                onRepoClicked = onRepoClicked
             )
         }
     }
