@@ -22,6 +22,7 @@ buildscript {
         google_truth_version = '1.1.2'
         espresso_version = '3.4.0'
         hilt_version = '2.42'
+        dagger_version = '2.42'
         coroutine_test = '1.6.4'
         turbine_version = '0.8.0'
         datastore_version = '1.0.0'

@@ -9,8 +9,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SingleRepoViewModel @Inject constructor() : ViewModel() {
 
-    var repo = mutableStateOf<Repo?>(null)
-    private set
+    val repo = mutableStateOf<Repo?>(null)
 
     fun setRepo(repo: Repo) {
         this.repo.value = repo

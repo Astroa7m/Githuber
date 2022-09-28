@@ -6,7 +6,7 @@ import com.astroscoding.common.domain.model.Sort
 import com.astroscoding.common.domain.repository.RepositoriesRepository
 import com.astroscoding.common.presentation.usecase.GetReposUseCase
 import com.astroscoding.common.util.Constants
-import com.astroscoding.common.util.ResponseUnsuccessfulException
+import com.astroscoding.common.util.exceptions.ResponseUnsuccessfulException
 import com.astroscoding.popularrepos.util.TestFunctions.generateReposDomain
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers

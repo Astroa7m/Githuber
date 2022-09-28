@@ -89,5 +89,5 @@ dependencies {
     implementation project(":popularrepos")
     implementation 'com.google.android.play:feature-delivery-ktx:2.0.0'
     // coil
-    implementation "io.coil-kt:coil-compose:$coil_version"
+    api "io.coil-kt:coil-compose:$coil_version"
 }

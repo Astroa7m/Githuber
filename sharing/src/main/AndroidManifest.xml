@@ -2,18 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <dist:module
         dist:instant='false'
         dist:title="@string/dynamic_feature_title">
-        <dist:deleivery>
-            <dist:on-demand />
-        </dist:deleivery>
+        <dist:delivery>
+            <dist:on-demand/>
+        </dist:delivery>
         <dist:fusing dist:include="true" />
     </dist:module>
 
     <application>
         <activity
-            android:name=".DynamicActivity"
+            android:name=".presentation.DynamicActivity"
             android:exported="true"
             android:label="@string/title_activity_dynamic"
             android:theme="@style/Theme.Githuber">

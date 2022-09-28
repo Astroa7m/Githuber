@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.astroscoding.common.data.preferences.RepoPreferences
 import com.astroscoding.common.domain.model.Sort
 import com.astroscoding.common.presentation.usecase.GetReposUseCase
-import com.astroscoding.common.util.BadQueryException
+import com.astroscoding.common.util.exceptions.BadQueryException
 import com.astroscoding.common.util.Constants
 import com.astroscoding.common.util.formQuery
 import com.astroscoding.common.util.languageSymbolToLanguageChar

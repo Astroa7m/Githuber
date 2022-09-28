@@ -238,8 +238,9 @@ fun RepoOwner(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape),
-
-            )
+            placeholder = painterResource(id = R.drawable.image_placeholder),
+            error = painterResource(id = R.drawable.image_placeholder)
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 

@@ -6,10 +6,10 @@ import com.astroscoding.common.data.remote.GithubApi
 import com.astroscoding.common.domain.model.Repo
 import com.astroscoding.common.domain.model.Sort
 import com.astroscoding.common.domain.repository.RepositoriesRepository
-import com.astroscoding.common.util.BadQueryException
-import com.astroscoding.common.util.EmptyResponseBodyException
-import com.astroscoding.common.util.LimitExceededException
-import com.astroscoding.common.util.ResponseUnsuccessfulException
+import com.astroscoding.common.util.exceptions.BadQueryException
+import com.astroscoding.common.util.exceptions.EmptyResponseBodyException
+import com.astroscoding.common.util.exceptions.LimitExceededException
+import com.astroscoding.common.util.exceptions.ResponseUnsuccessfulException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
