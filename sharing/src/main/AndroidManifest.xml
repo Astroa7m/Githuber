@@ -30,8 +30,8 @@
 
                 <data
                     android:host="@string/host"
-                    android:path="/dynamic_sharing_feature"
-                    android:scheme="@string/scheme" />
+                    android:path="@string/path_in_app"
+                    android:scheme="@string/scheme_in_app" />
             </intent-filter>
         </activity>
     </application>

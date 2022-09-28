@@ -1,5 +1,6 @@
 package com.astroscoding.di
 
+import com.astroscoding.common.data.preferences.RepoPreferences
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -7,5 +8,5 @@ import dagger.hilt.components.SingletonComponent
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface SharingModuleDependencies{
-    // TODO: add needed deps here and in sharing:SharingComponent
+    fun repoPreferences(): RepoPreferences
 }

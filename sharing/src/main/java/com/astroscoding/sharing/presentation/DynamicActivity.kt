@@ -1,5 +1,6 @@
 package com.astroscoding.sharing.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,11 +12,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.astroscoding.common.R
 import com.astroscoding.common.domain.model.Repo
 import com.astroscoding.common.presentation.ui.theme.GithuberTheme
 import com.astroscoding.di.SharingModuleDependencies
@@ -23,6 +26,8 @@ import com.astroscoding.sharing.di.DaggerSharingComponent
 import com.astroscoding.sharing.di.ViewModelFactory
 import com.astroscoding.sharing.model.RepoToShare
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +66,7 @@ class DynamicActivity : ComponentActivity() {
         modifier: Modifier = Modifier,
         repo: Repo? = viewModel.repo.value
     ) {
+        val scope = rememberCoroutineScope()
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
@@ -106,7 +112,11 @@ class DynamicActivity : ComponentActivity() {
                                 )
                             }
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                        scope.launch {
+                                            shareRepositoryUrl(repoToShare.name)
+                                        }
+                                },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(text = "Share")
@@ -116,5 +126,22 @@ class DynamicActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private suspend fun shareRepositoryUrl(repoName: String) {
+        Intent(Intent.ACTION_SEND).apply{
+            putExtra(Intent.EXTRA_TEXT, getRepoUrl(repoName))
+            type = "text/plain"
+            Intent.createChooser(this, null)
+            startActivity(this)
+        }
+    }
+
+    private suspend fun getRepoUrl(repoName: String): String {
+        val language = viewModel.currentLanguage.first()
+        val host = getString(R.string.host)
+        val scheme = getString(R.string.scheme)
+        val path = getString(R.string.path)
+        return "$scheme://$host$path?repoName=$repoName&language=$language"
     }
 }

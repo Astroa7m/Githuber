@@ -15,8 +15,19 @@ import com.astroscoding.search.presentation.SearchReposViewModel
 @Composable
 fun SearchRepoComposable(
     viewModel: SearchReposViewModel,
-    onRepoClicked: (repo: Repo) -> Unit
+    onRepoClicked: (repo: Repo) -> Unit,
+    queryFromDeepLink: String? = null,
+    language: String?
 ) {
+    LaunchedEffect(key1 = Unit){
+        queryFromDeepLink?.let { query ->
+            viewModel.onEvent(SearchReposUIEvent.InputQuery(query))
+            language?.let { language ->
+                viewModel.onEvent(SearchReposUIEvent.SelectNewLanguage(language))
+            }
+            viewModel.onEvent(SearchReposUIEvent.SearchRepos)
+        }
+    }
     val state = viewModel.state.collectAsState().value
     val animate = viewModel.shouldAnimateToStartOfTheList.collectAsState().value
     val notSearching = state.repos.isEmpty() && !state.loading

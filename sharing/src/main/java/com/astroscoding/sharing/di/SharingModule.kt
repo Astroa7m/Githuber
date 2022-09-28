@@ -16,11 +16,12 @@ abstract class SharingModule {
     @Binds
     @IntoMap
     @ViewModelKey(DynamicActivityViewModel::class)
-    abstract fun bindSharingFragmentViewModel(
+    abstract fun bindDynamicActivityViewModel(
         dynamicActivityViewModel: DynamicActivityViewModel
     ): ViewModel
 
     @Binds
     @Reusable
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+
 }

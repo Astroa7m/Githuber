@@ -1,0 +1,7 @@
+<resources>
+    <string name="host">www.githuberapp.com</string>
+    <string name="scheme">https</string>
+    <string name="scheme_in_app">app</string>
+    <string name="path">/rest</string>
+    <string name="path_in_app">/dynamic_feature</string>
+</resources>

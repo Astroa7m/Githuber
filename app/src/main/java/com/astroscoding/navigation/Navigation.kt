@@ -1,7 +1,7 @@
 package com.astroscoding.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +20,7 @@ fun GitHuberNavHost(
     searchReposViewModel: SearchReposViewModel,
     singleRepoViewModel: SingleRepoViewModel
 ) {
+    val context = LocalContext.current
     NavHost(
         navController = navController,
         startDestination = Destination.POPULAR_REPO_GRAPH,
@@ -29,7 +30,10 @@ fun GitHuberNavHost(
             singleRepoViewModel.setRepo(it)
             navController.navigate(Destination.DetailsRepo.route)
         }
-        searchNavGraph(searchReposViewModel) {
+        searchNavGraph(
+            searchReposViewModel,
+            context = context
+        ) {
             singleRepoViewModel.setRepo(it)
             navController.navigate(Destination.DetailsRepo.route)
         }

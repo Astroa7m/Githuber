@@ -103,8 +103,7 @@ fun ReposComposable(
                     state = lazyListState
                 ) {
                     items(
-                        items = repos,
-                        key = { repo -> repo.id }
+                        items = repos
                     ) { repo ->
                         RepoItem(
                             modifier = Modifier

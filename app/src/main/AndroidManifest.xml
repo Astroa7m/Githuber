@@ -25,14 +25,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <intent-filter android:label="test_deep_link">
+            <intent-filter android:label="Find that repository" android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
                     android:host="@string/host"
                     android:scheme="@string/scheme"
-                    android:path="/rest"/>
+                    android:path="@string/path"/>
             </intent-filter>
 
         </activity>

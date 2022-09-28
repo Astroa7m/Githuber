@@ -14,7 +14,7 @@ sealed class Destination(val route: String, val label: String, val imageVector: 
     }
 
     object PopularRepos : Destination("popular_repos", "Repos", Icons.Default.Home)
-    object SearchRepos : Destination("search_repos", "Search", Icons.Default.Search)
+    object SearchRepos : Destination("search_repos?repoName={repoName}", "Search", Icons.Default.Search)
 
     object DetailsRepo : Destination("details", "Details", Icons.Default.List)
 }
