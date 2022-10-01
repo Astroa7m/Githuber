@@ -15,7 +15,7 @@ import com.astroscoding.search.R
 
 @Composable
 fun SearchStart(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(16.dp),
