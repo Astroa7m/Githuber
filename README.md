@@ -12,23 +12,23 @@ The app has 2 installed features, one for showing **popular repository** accordi
 #### Screenshots ####
 <table align="center">
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896200-30b909bc-5bd6-4819-9d5e-cffd8c0d8091.png"></td>
-     <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896356-d28f06bc-de98-443a-a0ca-e27b85ed09c4.png"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896200-30b909bc-5bd6-4819-9d5e-cffd8c0d8091.png"  width="10%" height="10%"></td>
+     <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896356-d28f06bc-de98-443a-a0ca-e27b85ed09c4.png" width="10%" height="10%"></td>
   </tr>
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896704-ec7fa6e7-8c4a-483f-a431-c6387545d6dd.png" width="50%" height="50%"></td>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896777-345bc9a5-0d0a-4a89-838e-6d18d40580d4.png" width="50%" height="50%"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896704-ec7fa6e7-8c4a-483f-a431-c6387545d6dd.png" width="65%" height="65%"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193896777-345bc9a5-0d0a-4a89-838e-6d18d40580d4.png" width="65%" height="65%"></td>
   </tr>
  </table>
  
  <table align="center">
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900409-11916bdb-dfc2-489b-9c60-a6320700bffa.png"></td>
-     <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900490-0d8b8ded-857e-4570-9863-b66a36e1c61a.png"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900409-11916bdb-dfc2-489b-9c60-a6320700bffa.png" width="10%" height="10%"></td>
+     <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900490-0d8b8ded-857e-4570-9863-b66a36e1c61a.png" width="10%" height="10%"></td>
   </tr>
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900758-9304e8f2-2fd7-43c2-9954-6c21947eb891.png" width="50%" height="50%"></td>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900829-622d24fd-9718-45c0-b758-05d983278c2c.png" width="50%" height="50%"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900758-9304e8f2-2fd7-43c2-9954-6c21947eb891.png" width="65%" height="65%"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193900829-622d24fd-9718-45c0-b758-05d983278c2c.png" width="65%" height="65%"></td>
   </tr>
  </table>
 
@@ -40,12 +40,19 @@ The feature will prompt you to make the app the **default link handler** for the
   <tr>
     <td align="center">Details screen (from installed features which takes you to dynamic feature</td>
      <td align="center">Navigating to dynamic feature prompting the user (if not already enabled)</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193902772-a8d8402c-d279-4619-b701-abf8ef8b0425.png" width="65%" height="65%"></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193902846-d89c31a3-cc86-46f0-8201-73a7d15bb456.png" width="65%" height="65%"></td>
+  </tr>
+ </table>
+ 
+ <table align="center">
+  <tr>
      <td align="center">Sharing and opening links</td>
   </tr>
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193902772-a8d8402c-d279-4619-b701-abf8ef8b0425.png" width="50%" height="50%"></td>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193902846-d89c31a3-cc86-46f0-8201-73a7d15bb456.png" width="50%" height="50%"></td>
-    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193906693-7d459f6f-ea02-4c71-b357-aa2abe57ea08.gif" width="180" height="320" ></td>
+    <td align="center"><img src="https://user-images.githubusercontent.com/90382113/193906693-7d459f6f-ea02-4c71-b357-aa2abe57ea08.gif"  ></td>
   </tr>
  </table>
 
