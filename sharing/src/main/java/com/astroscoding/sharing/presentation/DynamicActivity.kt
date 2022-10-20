@@ -1,11 +1,15 @@
 package com.astroscoding.sharing.presentation
 
+import android.content.ClipData
 import android.content.Intent
 import android.content.pm.verify.domain.DomainVerificationManager
 import android.content.pm.verify.domain.DomainVerificationUserState
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,7 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.astroscoding.common.R
 import com.astroscoding.common.domain.model.Repo
 import com.astroscoding.common.presentation.ui.theme.GithuberTheme
@@ -34,8 +41,11 @@ import com.astroscoding.sharing.di.DaggerSharingComponent
 import com.astroscoding.sharing.di.ViewModelFactory
 import com.astroscoding.sharing.model.RepoToShare
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -221,8 +231,8 @@ class DynamicActivity : ComponentActivity() {
             putExtra(Intent.EXTRA_TEXT, getRepoUrl(repo.name))
             putExtra(Intent.EXTRA_TITLE, repo.description)
             type = "text/plain"
-            Intent.createChooser(this, null)
-            startActivity(this)
+            clipData = ClipData.newRawUri("repo's owner image", getImageUri(repo.ownerAvatarUrl))
+            startActivity(Intent.createChooser(this, null))
         }
     }
 
@@ -233,4 +243,19 @@ class DynamicActivity : ComponentActivity() {
         val path = getString(R.string.path)
         return "$scheme://$host$path?repoName=$repoName&language=$language"
     }
+
+    private suspend fun getImageUri(imageStringUrl: String) = withContext(Dispatchers.IO){
+        val loader = ImageLoader(this@DynamicActivity)
+        val req = ImageRequest.Builder(this@DynamicActivity)
+            .data(imageStringUrl)
+            .allowHardware(false)
+            .build()
+        val drawable = (loader.execute(req) as SuccessResult).drawable
+        val bitmap = (drawable as BitmapDrawable).bitmap
+        val bytes = ByteArrayOutputStream()
+        val path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "some image", null)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        Uri.parse(path)
+    }
+
 }
