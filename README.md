@@ -56,5 +56,7 @@ The feature will prompt you to make the app the **default link handler** for the
   </tr>
  </table>
 
+If want to get know my approach of handling links sharing and deep links check out this [article](https://medium.com/@astroa7m/handle-deep-links-for-in-app-content-in-a-single-activity-compose-architecture-ecdf722da95c)
+
 # Licnese
 **Githuber** is under MIT [license](LICENSE).
